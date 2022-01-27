@@ -87,7 +87,6 @@ const messages = createRouter()
     },
   });
 
-// root router to call
 export const appRouter = createRouter()
   .query("hello", {
     input: z.string().nullish(),
