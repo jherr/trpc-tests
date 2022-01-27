@@ -1,43 +1,58 @@
-/**
- * This file contains the root router of your tRPC-backend
- */
-import { Subscription } from '@trpc/server';
-import { clearInterval } from 'timers';
-import { createRouter } from '../createRouter';
-import { postRouter } from './post';
-import superjson from 'superjson';
+import { Subscription } from "@trpc/server";
+import superjson from "superjson";
+import { z } from "zod";
+import { EventEmitter } from "events";
 
-/**
- * Create your application's root router
- * If you want to use SSG, you need export this
- * @link https://trpc.io/docs/ssg
- * @link https://trpc.io/docs/router
- */
+import { createRouter } from "../createRouter";
+
+const ee = new EventEmitter();
+
+interface Message {
+  user: string;
+  message: string;
+}
+
+const messages: Message[] = [
+  {
+    user: "Jane",
+    message: "What's up?",
+  },
+  {
+    user: "Jack",
+    message: "Not much, just chillin'",
+  },
+];
+
 export const appRouter = createRouter()
-  /**
-   * Add data transformers
-   * @link https://trpc.io/docs/data-transformers
-   */
   .transformer(superjson)
-  /**
-   * Optionally do custom error (type safe!) formatting
-   * @link https://trpc.io/docs/error-formatting
-   */
-  // .formatError(({ shape, error }) => { })
-  .query('healthz', {
+  .query("getMessages", {
     resolve() {
-      return 'yay!';
+      return messages;
     },
   })
-  .merge('post.', postRouter)
-  .subscription('randomNumber', {
-    resolve() {
-      return new Subscription<number>((emit) => {
-        const int = setInterval(() => {
-          emit.data(Math.random());
-        }, 500);
+  .mutation("addMessage", {
+    input: z.object({
+      user: z.string(),
+      message: z.string(),
+    }),
+    resolve({ input }) {
+      const msg = {
+        ...input,
+      };
+      messages.push(msg);
+      ee.emit("add", msg);
+      return messages;
+    },
+  })
+  .subscription("onAdd", {
+    resolve({ ctx }) {
+      return new Subscription<Message>((emit) => {
+        const onAdd = (data: Message) => {
+          emit.data(data);
+        };
+        ee.on("add", onAdd);
         return () => {
-          clearInterval(int);
+          ee.off("add", onAdd);
         };
       });
     },

@@ -1,22 +1,18 @@
-import { CreateContextFnOptions } from '@trpc/server';
-import * as trpcNext from '@trpc/server/adapters/next';
-import { IncomingMessage } from 'http';
-import ws from 'ws';
-import * as trpc from '@trpc/server';
-import { getSession } from 'next-auth/client';
+import { NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
+import * as trpcNext from "@trpc/server/adapters/next";
+import { IncomingMessage } from "http";
+import ws from "ws";
+import * as trpc from "@trpc/server";
 
 export const createContext = async ({
   req,
   res,
 }:
   | trpcNext.CreateNextContextOptions
-  | CreateContextFnOptions<IncomingMessage, ws>) => {
-  const session = await getSession({ req });
-  console.log('createContext for', session?.user?.name ?? 'unknown user');
+  | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>) => {
   return {
     req,
     res,
-    session,
   };
 };
 
