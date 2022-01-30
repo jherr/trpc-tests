@@ -45,7 +45,7 @@ export const appRouter = createRouter()
     },
   })
   .subscription("onAdd", {
-    resolve({ ctx }) {
+    resolve() {
       return new Subscription<Message>((emit) => {
         const onAdd = (data: Message) => {
           emit.data(data);

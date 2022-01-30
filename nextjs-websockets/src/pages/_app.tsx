@@ -8,11 +8,11 @@ import getConfig from "next/config";
 
 import type { AppRouter } from "server/routers/_app";
 
-const { publicRuntimeConfig } = getConfig();
-
 import "../styles/globals.css";
 
-const { APP_URL, WS_URL } = publicRuntimeConfig;
+const {
+  publicRuntimeConfig: { APP_URL, WS_URL },
+} = getConfig();
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return <Component {...pageProps} />;

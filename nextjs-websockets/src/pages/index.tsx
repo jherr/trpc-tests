@@ -2,18 +2,21 @@ import { useState } from "react";
 import { trpc } from "../utils/trpc";
 
 export default function IndexPage() {
+  // Get the initial messages
   const messages = trpc.useQuery(["getMessages"]);
   const [subMessages, setSubMessages] = useState<typeof messages["data"]>(
     () => {
       return messages.data;
     },
   );
+  // Add in new messages from the subscription
   trpc.useSubscription(["onAdd"], {
     onNext(msg) {
       setSubMessages((msgs) => [...(msgs || []), msg]);
     },
   });
 
+  // Supports adding a message to the chat
   const addMessage = trpc.useMutation(["addMessage"]);
   const [user, setUser] = useState("Jack");
   const [message, setMessage] = useState("");

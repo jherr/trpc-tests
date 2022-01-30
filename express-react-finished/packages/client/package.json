@@ -4,7 +4,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "build:start": "cd dist && PORT=3000 npx serve",
+    "build:start": "cd dist && PORT=8080 npx serve",
     "start": "webpack serve --open --mode development",
     "start:live": "webpack serve --open --mode development --live-reload --hot"
   },
@@ -38,10 +38,10 @@
     "@trpc/client": "^9.17.1",
     "@trpc/react": "^9.17.1",
     "@trpc/server": "^9.17.1",
+    "api": "1.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-query": "^3.34.12",
-    "server": "1.0.0",
     "zod": "^3.11.6"
   }
 }
